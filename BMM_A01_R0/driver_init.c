@@ -103,12 +103,12 @@ void USART_Diag_PORT_init()
  *
  * Enables USART peripheral, clocks and initializes USART driver
  */
-void USART_Diag_init(void)
-{
-	USART_Diag_CLOCK_init();
-	usart_async_init(&USART_Diag, SERCOM3, USART_Diag_buffer, USART_DIAG_BUFFER_SIZE, (void *)NULL);
-	USART_Diag_PORT_init();
-}
+//void USART_Diag_init(void)
+//{
+	//USART_Diag_CLOCK_init();
+	//usart_async_init(&USART_Diag, SERCOM3, USART_Diag_buffer, USART_DIAG_BUFFER_SIZE, (void *)NULL);
+	//USART_Diag_PORT_init();
+//}
 
 void CAN_CTRL_PORT_init(void)
 {
