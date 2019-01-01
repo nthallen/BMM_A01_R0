@@ -516,13 +516,6 @@ static uint8_t _sercom_get_hardware_index(const void *const hw)
 	return ((uint32_t)hw - (uint32_t)SERCOM0) / sizeof(Sercom);
 #endif
 
-#if defined __SAML21E18B__ || defined __ATSAML21E18B__ || defined __SAML21G18B__ || defined __ATSAML21G18B__           \
-    || defined __SAML21J18B__ || defined __ATSAML21J18B__ || defined __ATSAMR30G18A__ || defined __ATSAMR30E18A__
-	if ((uint32_t)SERCOM5 == (uint32_t)hw) {
-		return 5;
-	}
-#endif
-
 	return ((uint32_t)hw - (uint32_t)SERCOM0) >> 10;
 }
 

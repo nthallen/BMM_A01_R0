@@ -11,7 +11,13 @@
 #include <utils.h>
 #include <hal_init.h>
 
-struct can_async_descriptor CAN_CTRL;
+/*! The buffer size for USART */
+#define USART_DIAG_BUFFER_SIZE 16
+
+struct usart_async_descriptor USART_Diag;
+struct can_async_descriptor   CAN_CTRL;
+
+static uint8_t USART_Diag_buffer[USART_DIAG_BUFFER_SIZE];
 
 struct calendar_descriptor CALENDAR;
 
@@ -92,21 +98,22 @@ void USART_Diag_PORT_init()
 	gpio_set_pin_function(PA25, PINMUX_PA25C_SERCOM3_PAD3);
 }
 
+/**
+ * \brief USART initialization function
+ *
+ * Enables USART peripheral, clocks and initializes USART driver
+ */
+void USART_Diag_init(void)
+{
+	USART_Diag_CLOCK_init();
+	usart_async_init(&USART_Diag, SERCOM3, USART_Diag_buffer, USART_DIAG_BUFFER_SIZE, (void *)NULL);
+	USART_Diag_PORT_init();
+}
+
 void CAN_CTRL_PORT_init(void)
 {
 
 	gpio_set_pin_function(PB11, PINMUX_PB11G_CAN1_RX);
-
-	// Set pin direction to input
-	gpio_set_pin_direction(ALRT, GPIO_DIRECTION_IN);
-
-	gpio_set_pin_pull_mode(ALRT,
-	                       // <y> Pull configuration
-	                       // <id> pad_pull_config
-	                       // <GPIO_PULL_OFF"> Off
-	                       // <GPIO_PULL_UP"> Pull-up
-	                       // <GPIO_PULL_DOWN"> Pull-down
-	                       GPIO_PULL_OFF);
 
 	gpio_set_pin_function(ALRT, PINMUX_PB10G_CAN1_TX);
 }
@@ -187,9 +194,6 @@ void system_init(void)
 	CALENDAR_init();
 
 	I2C_init();
-
-	USART_Diag_CLOCK_init();
 	USART_Diag_init();
-	USART_Diag_PORT_init();
 	CAN_CTRL_init();
 }

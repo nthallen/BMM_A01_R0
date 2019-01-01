@@ -24,13 +24,14 @@ extern "C" {
 #include <hal_calendar.h>
 
 #include <hal_i2c_m_async.h>
-#include <usart_lite.h>
+#include <hal_usart_async.h>
 #include <hal_can_async.h>
 
 extern struct calendar_descriptor CALENDAR;
 
-extern struct i2c_m_async_desc     I2C;
-extern struct can_async_descriptor CAN_CTRL;
+extern struct i2c_m_async_desc       I2C;
+extern struct usart_async_descriptor USART_Diag;
+extern struct can_async_descriptor   CAN_CTRL;
 
 void CALENDAR_CLOCK_init(void);
 void CALENDAR_init(void);
@@ -39,9 +40,9 @@ void I2C_PORT_init(void);
 void I2C_CLOCK_init(void);
 void I2C_init(void);
 
-void   USART_Diag_PORT_init(void);
-void   USART_Diag_CLOCK_init(void);
-int8_t USART_Diag_init(void);
+void USART_Diag_PORT_init(void);
+void USART_Diag_CLOCK_init(void);
+void USART_Diag_init(void);
 
 /**
  * \brief Perform system initialization, initialize pins and clocks for
