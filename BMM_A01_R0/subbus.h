@@ -20,8 +20,12 @@
   #define SUBBUS_BOARD_ID             13
 #endif
 #ifdef uDACS_12
-#define BOARD_REV                   "V9:178:HCHO uDACS Rev A V1.1"
-#define SUBBUS_BOARD_ID             12
+  #define BOARD_REV                   "V9:178:HCHO uDACS Rev A V1.1"
+  #define SUBBUS_BOARD_ID             12
+#endif
+#ifdef BMM_14
+  #define BOARD_REV                   "V10:178:SCoPEx BMM Rev A V1.0"
+  #define SUBBUS_BOARD_ID             14
 #endif
 
 #if USE_SUBBUS
