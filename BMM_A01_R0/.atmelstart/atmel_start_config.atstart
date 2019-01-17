@@ -4,7 +4,7 @@ versions:
   api: '1.0'
   backend: 1.4.93
   commit: 9c29f8365cf76e9937d19b1e765a83bc7a80e4e9
-  content: 1.0.1303
+  content: 1.0.1340
   content_pack_name: acme-packs-all
   format: '2'
   frontend: 1.4.1810
@@ -715,16 +715,22 @@ pads:
     user_label: PA09
     configuration: null
   ALRT:
+    name: PA10
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21G18A-AN::pad::PA10
+    mode: Digital input
+    user_label: ALRT
+    configuration: null
+  CAN_TX:
     name: PB10
     definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21G18A-AN::pad::PB10
     mode: Peripheral IO
-    user_label: ALRT
+    user_label: CAN_TX
     configuration: null
-  PB11:
+  CAN_RX:
     name: PB11
     definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21G18A-AN::pad::PB11
     mode: Peripheral IO
-    user_label: PB11
+    user_label: CAN_RX
     configuration: null
   VDD2SENSE:
     name: PA12

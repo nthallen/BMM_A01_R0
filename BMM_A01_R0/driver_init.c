@@ -103,19 +103,19 @@ void USART_Diag_PORT_init()
  *
  * Enables USART peripheral, clocks and initializes USART driver
  */
-//void USART_Diag_init(void)
-//{
-	//USART_Diag_CLOCK_init();
-	//usart_async_init(&USART_Diag, SERCOM3, USART_Diag_buffer, USART_DIAG_BUFFER_SIZE, (void *)NULL);
-	//USART_Diag_PORT_init();
-//}
+// void USART_Diag_init(void)
+// {
+	// USART_Diag_CLOCK_init();
+	// usart_async_init(&USART_Diag, SERCOM3, USART_Diag_buffer, USART_DIAG_BUFFER_SIZE, (void *)NULL);
+	// USART_Diag_PORT_init();
+// }
 
 void CAN_CTRL_PORT_init(void)
 {
 
-	gpio_set_pin_function(PB11, PINMUX_PB11G_CAN1_RX);
+	gpio_set_pin_function(CAN_RX, PINMUX_PB11G_CAN1_RX);
 
-	gpio_set_pin_function(ALRT, PINMUX_PB10G_CAN1_TX);
+	gpio_set_pin_function(CAN_TX, PINMUX_PB10G_CAN1_TX);
 }
 /**
  * \brief CAN initialization function
@@ -133,6 +133,21 @@ void CAN_CTRL_init(void)
 void system_init(void)
 {
 	init_mcu();
+
+	// GPIO on PA10
+
+	// Set pin direction to input
+	gpio_set_pin_direction(ALRT, GPIO_DIRECTION_IN);
+
+	gpio_set_pin_pull_mode(ALRT,
+	                       // <y> Pull configuration
+	                       // <id> pad_pull_config
+	                       // <GPIO_PULL_OFF"> Off
+	                       // <GPIO_PULL_UP"> Pull-up
+	                       // <GPIO_PULL_DOWN"> Pull-down
+	                       GPIO_PULL_OFF);
+
+	gpio_set_pin_function(ALRT, GPIO_PIN_FUNCTION_OFF);
 
 	// GPIO on PA12
 
