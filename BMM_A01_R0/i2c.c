@@ -46,11 +46,11 @@ static subbus_cache_word_t i2c_cache[I2C_HIGH_ADDR-I2C_BASE_ADDR+1] = {
 
 static void  pm_record_i2c_error(enum pm_state_t pm_state, int32_t I2C_error) {
   uint16_t word = ((pm_state & 0x7) << 4) | (I2C_error & 0xF);
-  i2c_cache[5].cache = (i2c_cache[4].cache & 0xFF00) | word;
+  i2c_cache[5].cache = (i2c_cache[5].cache & 0xFF00) | word;
 }
 
 static void pm_record_ov_status(uint8_t ovs) {
-  i2c_cache[5].cache = (i2c_cache[4].cache & 0xFCFF) | ((ovs & 3) << 8);
+  i2c_cache[5].cache = (i2c_cache[5].cache & 0xFCFF) | ((ovs & 3) << 8);
 }
 
 /**
@@ -59,15 +59,9 @@ static void pm_record_ov_status(uint8_t ovs) {
 static bool pm_poll(void) {
   static int n_readings = 0;
   // static int64_t sum = 0;
-  static bool read_observed = false;
 
-  if (!read_observed && i2c_cache[1].was_read) {
-    read_observed = true;
-    n_readings = 0;
-    // sum = 0;
-  }
   if (i2c_cache[1].was_read && i2c_cache[2].was_read && i2c_cache[3].was_read && i2c_cache[4].was_read) {
-    read_observed = false;
+    n_readings = 0;
     i2c_cache[1].was_read = i2c_cache[2].was_read = i2c_cache[3].was_read = i2c_cache[4].was_read = false;
   }
   if (i2c_cache[5].was_read) {
@@ -80,7 +74,6 @@ static bool pm_poll(void) {
 
   switch (pm_state) {
     case pm_init:
-      ++n_readings;
       I2C_txfr_complete = false;
       i2c_m_async_set_slaveaddr(&I2C, PM_SLAVE_ADDR, I2C_M_SEVEN);
       io_read(I2C_io, pm_ibuf, 6);
@@ -95,7 +88,7 @@ static bool pm_poll(void) {
         i2c_cache[1].cache = (pm_ibuf[0]<<8) | pm_ibuf[1];
         i2c_cache[2].cache = (pm_ibuf[2]<<8) | pm_ibuf[3];
         i2c_cache[3].cache = (pm_ibuf[4]<<8) | pm_ibuf[5];
-        i2c_cache[4].cache = n_readings;
+        i2c_cache[4].cache = ++n_readings;
         pm_state = pm_init;
       }
       return true;

@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define FCC3
+#define BMM_14
 #define USE_SUBBUS 1
 
 #ifdef FCC1
