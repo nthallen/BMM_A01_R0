@@ -19,7 +19,26 @@ PI = read_subbus(s, 33);
 PV = read_subbus(s, 34);
 Vout = read_subbus(s, 35);
 NReadings = read_subbus(s, 36);
+CmdStatus = read_subbus(s, 48);
 Rshunt = 0.007;
-fprintf(1, 'PI = (%d) %.0f A  PV = %.3f Vout = %.3f NR = %d\n', ...
+fprintf(1, 'PI = (%d) %.2f A  PV = %.3f Vout = %.3f NR = %d  cmds = %d\n', ...
     PI/16, PI*.02e-3/(16*Rshunt), PV * 0.025/16, ...
-    Vout*5e-4*31.4e3/(16*2e3), NReadings);
+    Vout*5e-4*31.4e3/(16*2e3), NReadings, CmdStatus);
+%%
+% Shutdown Active
+write_subbus(s, 48, 4);
+%%
+% Power on
+write_subbus(s, 48, 5);
+%%
+% Status LED On
+write_subbus(s, 48, 1);
+%%
+% Status LED Off
+write_subbus(s, 48, 0);
+%%
+% Fault LED On
+write_subbus(s, 48, 3);
+%%
+% Fault LED Off
+write_subbus(s, 48, 2);

@@ -3,6 +3,7 @@
 #include "subbus.h"
 #include "control.h"
 #include "i2c.h"
+#include "commands.h"
 
 int main(void)
 {
@@ -12,6 +13,7 @@ int main(void)
   if (subbus_add_driver(&sb_base)
       || subbus_add_driver(&sb_fail_sw)
       || subbus_add_driver(&sb_i2c)
+      || subbus_add_driver(&sb_cmd)
      )
   {
     while (true) ; // some driver is misconfigured.

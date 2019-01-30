@@ -431,6 +431,12 @@
     <Compile Include="atmel_start_pins.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="commands.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="commands.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="config\hpl_can_config.h">
       <SubType>compile</SubType>
     </Compile>
