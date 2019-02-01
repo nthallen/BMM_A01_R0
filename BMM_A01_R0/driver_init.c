@@ -17,7 +17,7 @@
 struct usart_async_descriptor USART_Diag;
 struct can_async_descriptor   CAN_CTRL;
 
-static uint8_t USART_Diag_buffer[USART_DIAG_BUFFER_SIZE];
+// static uint8_t USART_Diag_buffer[USART_DIAG_BUFFER_SIZE];
 
 struct calendar_descriptor CALENDAR;
 

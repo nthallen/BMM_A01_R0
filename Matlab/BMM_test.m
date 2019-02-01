@@ -3,7 +3,7 @@ cd C:\Users\nort\Documents\Documents\Exp\SCoPEx\BMM_A01_R0\Matlab
 %%
 serial_port_clear();
 %%
-[s,port] = serial_port_init('COM7');
+[s,port] = serial_port_init('COM8');
 %set(s,'BaudRate',57600);
 set(s,'BaudRate',9600);
 %%
@@ -42,3 +42,11 @@ write_subbus(s, 48, 3);
 %%
 % Fault LED Off
 write_subbus(s, 48, 2);
+%%
+Rshunt = 0.003;
+Vout_div = 2/(29.4+2);
+Vout_div1 = 2/(59+2);
+fprintf(1, 'PI = (%d) %.2f A  PV = %.3f Vout = %.3f NR = %d  cmds = %d\n', ...
+    PI/16, PI*.02e-3/(16*Rshunt), PV * 0.025/16, ...
+    Vout*5e-4*31.4e3/(16*2e3), NReadings, CmdStatus);
+
