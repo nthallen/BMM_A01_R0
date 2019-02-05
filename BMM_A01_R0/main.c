@@ -1,5 +1,6 @@
 #include <atmel_start.h>
 #include "usart.h"
+#include "can_control.h"
 #include "subbus.h"
 #include "control.h"
 #include "i2c.h"
@@ -14,6 +15,7 @@ int main(void)
       || subbus_add_driver(&sb_fail_sw)
       || subbus_add_driver(&sb_i2c)
       || subbus_add_driver(&sb_cmd)
+      || subbus_add_driver(&sb_can)
      )
   {
     while (true) ; // some driver is misconfigured.

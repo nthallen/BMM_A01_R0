@@ -75,6 +75,7 @@ extern subbus_driver_t sb_base;
 extern subbus_driver_t sb_fail_sw;
 
 bool subbus_cache_iswritten(subbus_driver_t *drv, uint16_t addr, uint16_t *value);
+bool subbus_cache_was_read(subbus_driver_t *drv, uint16_t addr);
 bool subbus_cache_update(subbus_driver_t *drv, uint16_t addr, uint16_t data);
 
 #endif // USE_SUBBUS

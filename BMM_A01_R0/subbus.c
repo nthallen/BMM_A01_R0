@@ -138,7 +138,7 @@ bool subbus_cache_iswritten(subbus_driver_t *drv, uint16_t addr, uint16_t *value
   }
   return false;
 }
-  
+
 /**
  * This function differs from subbus_cache_write() in that it directly
  * updates the cache value. subbus_cache_write() is specifically for
@@ -159,6 +159,14 @@ bool subbus_cache_update(subbus_driver_t *drv, uint16_t addr, uint16_t data) {
       word->was_read = false;
       return true;
     }
+  }
+  return false;
+}
+
+bool subbus_cache_was_read(subbus_driver_t *drv, uint16_t addr) {
+  if (addr >= drv->low && addr <= drv->high) {
+    subbus_cache_word_t *word = &drv->cache[addr-drv->low];
+    return word->was_read;
   }
   return false;
 }

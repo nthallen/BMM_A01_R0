@@ -49,7 +49,7 @@
 // <i> Baud Rate Prescale
 // <id> can_btp_brp
 #ifndef CONF_CAN1_BTP_BRP
-#define CONF_CAN1_BTP_BRP 3
+#define CONF_CAN1_BTP_BRP 4
 #endif
 
 // <o> time segment before sample point <2-64>
