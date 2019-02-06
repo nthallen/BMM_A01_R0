@@ -54,12 +54,20 @@ void subbus_poll(void);
 void set_fail(uint16_t arg);
 
 typedef struct {
+  /** The current value of this word */
   uint16_t cache;
+  /** The value that has been written. Allows the driver code to do checks for validity */
   uint16_t wvalue;
+  /** True if this word is readable */
   bool readable;
+  /** True if this word has been read */
   bool was_read;
+  /** True if this word is writable */
   bool writable;
+  /** True if this word has been written */
   bool written;
+  /** True to invoke sb_action immediately rather than waiting for poll */
+  bool dynamic;
 } subbus_cache_word_t;
 
 typedef struct {
@@ -67,6 +75,7 @@ typedef struct {
   subbus_cache_word_t *cache;
   void (*reset)(void);
   void (*poll)(void);
+  void (*sb_action)(void);
   bool initialized;
 } subbus_driver_t;
 

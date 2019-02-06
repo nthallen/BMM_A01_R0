@@ -48,6 +48,8 @@ int subbus_read( uint16_t addr, uint16_t *rv ) {
       if (cache->readable) {
         *rv = cache->cache;
         cache->was_read = true;
+        if (cache->dynamic && drivers[i]->sb_action)
+          drivers[i]->sb_action();
         return 1;
       }
     }
@@ -69,6 +71,8 @@ int subbus_write( uint16_t addr, uint16_t data) {
       if (cache->writable) {
         cache->wvalue = data;
         cache->written = true;
+        if (cache->dynamic && drivers[i]->sb_action)
+          drivers[i]->sb_action();
         return 1;
       }
     }
@@ -91,17 +95,17 @@ void intr_service(void);
 #endif
 
 static subbus_cache_word_t sb_base_cache[SUBBUS_BDID_ADDR+2] = {
-  { 0, 0, 0, 0, 0, 0 }, // Reserved zero address
-  { 0, 0, 0, 0, 0, 0} , // INTA
-  { SUBBUS_BUILD_NUM, 0, 1, 0, 0, 0 }, // Build number (SUBBUS_BDID_ADDR)
-  { SUBBUS_BOARD_ID, 0, 1, 0, 0, 0 }      // Board ID
+  { 0, 0, 0, 0, 0, 0, 0 }, // Reserved zero address
+  { 0, 0, 0, 0, 0, 0, 0} , // INTA
+  { SUBBUS_BUILD_NUM, 0, 1, 0, 0, 0, 0 }, // Build number (SUBBUS_BDID_ADDR)
+  { SUBBUS_BOARD_ID, 0, 1, 0, 0, 0, 0 }      // Board ID
 };
 
-subbus_driver_t sb_base = { 0, SUBBUS_BDID_ADDR+1, sb_base_cache, 0, 0, false };
+subbus_driver_t sb_base = { 0, SUBBUS_BDID_ADDR+1, sb_base_cache, 0, 0, 0, false };
 
 static subbus_cache_word_t sb_fail_sw_cache[SUBBUS_SWITCHES_ADDR-SUBBUS_FAIL_ADDR+1] = {
-  { 0, 0, 1, 0, 1, 0 }, // Fail Register
-  { 0, 0, 1, 0, 0, 0 }  // Switches
+  { 0, 0, 1, 0, 1, 0, 0 }, // Fail Register
+  { 0, 0, 1, 0, 0, 0, 0 }  // Switches
 };
 
 static void sb_fail_sw_reset() {
@@ -116,7 +120,7 @@ static void sb_fail_sw_poll() {
 }
 
 subbus_driver_t sb_fail_sw = { SUBBUS_FAIL_ADDR, SUBBUS_SWITCHES_ADDR,
-    sb_fail_sw_cache, sb_fail_sw_reset, sb_fail_sw_poll, false };
+    sb_fail_sw_cache, sb_fail_sw_reset, sb_fail_sw_poll, 0, false };
 
 
 /**
@@ -140,8 +144,8 @@ bool subbus_cache_iswritten(subbus_driver_t *drv, uint16_t addr, uint16_t *value
 }
 
 /**
- * This function differs from subbus_cache_write() in that it directly
- * updates the cache value. subbus_cache_write() is specifically for
+ * This function differs from subbus_write() in that it directly
+ * updates the cache value. subbus_write() is specifically for
  * write originating from the control port. subbus_cache_update() is
  * used by internal functions for storing data acquired from
  * peripherals, or for storing values written from the control

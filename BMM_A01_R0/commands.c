@@ -47,7 +47,7 @@ static void cmd_reset(void) {
  * 0x1A R: ADC_U3_T
  */
 static subbus_cache_word_t cmd_cache[CMD_HIGH_ADDR-CMD_BASE_ADDR+1] = {
-  { 0, 0, true,  false, true, false } // Offset 0: R: ADC Flow 0
+  { 0, 0, true,  false, true, false, false } // Offset 0: R: ADC Flow 0
 };
 
 subbus_driver_t sb_cmd = {
@@ -55,5 +55,6 @@ subbus_driver_t sb_cmd = {
   cmd_cache,
   cmd_reset,
   cmd_poll,
+  0, // dynamic driver
   false
 };

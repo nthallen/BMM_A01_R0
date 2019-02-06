@@ -33,15 +33,15 @@ static enum pm_state_t pm_state = pm_init;
  * 0x26 R:  T2
  */
 static subbus_cache_word_t i2c_cache[I2C_HIGH_ADDR-I2C_BASE_ADDR+1] = {
-  { 0, 0, true,  false,  false, false }, // Offset 0: R: I2C Status
-  { 0, 0, true,  false, false, false },  // Offset 1: R: PwrMon_I
-  { 0, 0, true,  false, false, false },  // Offset 2: R: PwrMon_V
-  { 0, 0, true,  false, false, false },  // Offset 3: R: PwrMon_V2
-  { 0, 0, true,  false, false, false },  // Offset 4: R: PwrMon_N
-  { 0, 0, true,  false, false, false },  // Offset 5: R: PwrMon_Status
-  { 0, 0, true,  false,  true, false },  // Offset 6: R: T1
-  { 0, 0, true,  false, false, false },  // Offset 7: R: T2
-  { 0, 0, true,  false, false, false }   // Offset 8: R: ADS_N
+  { 0, 0, true,  false,  false, false, false }, // Offset 0: R: I2C Status
+  { 0, 0, true,  false, false, false, false },  // Offset 1: R: PwrMon_I
+  { 0, 0, true,  false, false, false, false },  // Offset 2: R: PwrMon_V
+  { 0, 0, true,  false, false, false, false },  // Offset 3: R: PwrMon_V2
+  { 0, 0, true,  false, false, false, false },  // Offset 4: R: PwrMon_N
+  { 0, 0, true,  false, false, false, false },  // Offset 5: R: PwrMon_Status
+  { 0, 0, true,  false,  true, false, false },  // Offset 6: R: T1
+  { 0, 0, true,  false, false, false, false },  // Offset 7: R: T2
+  { 0, 0, true,  false, false, false, false }   // Offset 8: R: ADS_N
 };
 
 static void  pm_record_i2c_error(enum pm_state_t pm_state, int32_t I2C_error) {
@@ -266,5 +266,6 @@ subbus_driver_t sb_i2c = {
   i2c_cache,
   i2c_reset,
   i2c_poll,
+  0, // Dynamic function
   false
 };
