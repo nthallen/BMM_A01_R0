@@ -1,4 +1,5 @@
 #include <string.h>
+#include "driver_init.h"
 #include "can_control.h"
 
 bool can_tx_completed = true;
@@ -35,7 +36,6 @@ int32_t can_control_read(struct can_message *msg) {
  */
 int32_t can_control_write(uint16_t ID, uint8_t *data, int nb) {
 	struct can_message msg;
-  int32_t rv;
 
   if (nb < 0 || nb > 8) {
     return ERR_WRONG_LENGTH;
@@ -80,8 +80,14 @@ static struct {
     bool pending;
   } cur_req;
 
-static void service_can_request() {
+static void can_send_error_1(uint16_t id, uint8_t err_code, uint8_t arg);
+static void can_send_error_2(uint16_t id, uint8_t err_code, uint8_t arg1,
+         uint8_t arg2);
+
+static void service_can_request(bool new_request) {
   // pick up where we left off...
+  assert(!(new_request && cur_req.pending),__FILE__,__LINE__);
+  cur_req.pending = cur_req.pending || new_request;
   if (!cur_req.pending) return;
   if (cur_req.tx_blocked) {
     uint32_t rv = can_async_write(&CAN_CTRL,&cur_req.omsg);
@@ -94,75 +100,79 @@ static void service_can_request() {
         return;
     }
   } else {
-    uint16_t byte;
     switch (cur_req.cmd) {
       case CAN_CMD_CODE_RD:
+        cur_req.odata[0] = cur_req.cmd | CAN_CMD_SEQ(cur_req.seq++);
         cur_req.omsg.len = 1;
         if (cur_req.half_word) {
-          cur_req.odata[cur_req.omsg.len++] = (value >> 8) & 0xFF;
+          cur_req.odata[cur_req.omsg.len++] = (cur_req.value >> 8) & 0xFF;
           cur_req.half_word = false;
         }
-        while (cur_req.omsg.len < 8 && cur_req.count < cur_req.count_limit) {
-          uint16_t addr = cur_req.idata[count+1];
-          if (subbus_read(addr, &cur_req.value)) {
-            cur_req.odata[cur_req.omsg.len++] = cur_req.value & 0xFF;
-            if (cur_req.omsg.len < 8) {
-              cur_req.odata[cur_req.omsg.len++] = (cur_req.value >> 8) & 0xFF;
-            } else {
-              cur_req.half_word = true;
-            }
-            ++cur_req.count;
-            if (cur_req.omsg.len == 8) {
-              uint32_t rv = can_async_write(&CAN_CTRL, &cur_req.omsg);
-              if (rv != ERR_NONE) {
-                record_can_error(rv);
-                if (rv == ERR_NO_RESOURCE) {
-                  cur_req.tx_blocked = true;
-                  return;
-                }
+        while (cur_req.count < cur_req.count_limit) {
+          uint32_t rv;
+          while (cur_req.omsg.len < 8 && cur_req.count < cur_req.count_limit) {
+            uint16_t addr = cur_req.idata[cur_req.count+1];
+            if (subbus_read(addr, &cur_req.value)) {
+              cur_req.odata[cur_req.omsg.len++] = cur_req.value & 0xFF;
+              if (cur_req.omsg.len < 8) {
+                cur_req.odata[cur_req.omsg.len++] = (cur_req.value >> 8) & 0xFF;
+              } else {
+                cur_req.half_word = true;
               }
+              ++cur_req.count;
+            } else {
+              can_send_error_2(cur_req.omsg.id, CAN_ERR_NACK, cur_req.cmd, addr);
+              return;
             }
-          } else {
-            can_send_error_2(cur_req.omsg.id, CAN_ERR_NACK, cur_req.cmd, addr);
+          }
+          rv = can_async_write(&CAN_CTRL, &cur_req.omsg);
+          if (rv != ERR_NONE) {
+            record_can_error(rv);
+            if (rv == ERR_NO_RESOURCE) {
+              cur_req.tx_blocked = true;
+            } else {
+              can_send_error_2(cur_req.omsg.id, CAN_ERR_OTHER, cur_req.cmd, -rv);
+            }
             return;
           }
         }
+        cur_req.pending = false;
         break;
       default:
+        assert(false, __FILE__,__LINE__);
     }
   }
 }
 
 static void cur_req_init(uint32_t id, uint8_t cmd) {
-  cur_req.cmd = cmd & CAN_CMD_REQ_RESP;
+  cur_req.cmd = cmd;
   cur_req.omsg.id = id | CAN_ID_REPLY_BIT;
   cur_req.omsg.type = CAN_TYPE_DATA;
   cur_req.omsg.fmt = CAN_FMT_STDID;
   cur_req.omsg.data = cur_req.odata;
-  cur_req.omsg.odata[0] = cur_req.cmd; // Implicit SeqID 0
   cur_req.len = 0;
   cur_req.seq = 0;
   cur_req.count = 0;
   cur_req.half_word = false;
   cur_req.tx_blocked = false;
-
+  cur_req.pending = false;
 }
 
-static int32_t can_send_error_1(uint16_t id, uint8_t err_code, uint8_t arg) {
+static void can_send_error_1(uint16_t id, uint8_t err_code, uint8_t arg) {
   cur_req_init(id, CAN_CMD_CODE_ERROR);
   cur_req.odata[1] = err_code;
   cur_req.odata[2] = arg;
   cur_req.omsg.len = 3;
-  service_can_request();
+  service_can_request(true);
 }
 
-static int32_t can_send_error_2(uint16_t id, uint8_t err_code, uint8_t arg1, uint8_t arg2) {
+static void can_send_error_2(uint16_t id, uint8_t err_code, uint8_t arg1, uint8_t arg2) {
   cur_req_init(id, CAN_CMD_CODE_ERROR);
   cur_req.odata[1] = err_code;
   cur_req.odata[2] = arg1;
   cur_req.odata[3] = arg2;
   cur_req.omsg.len = 4;
-  service_can_request();
+  service_can_request(true);
 }
 
 void setup_can_request(struct can_message *msg) {
@@ -175,21 +185,17 @@ void setup_can_request(struct can_message *msg) {
       cur_req.count_limit = cur_req.len-1;
       break;
     default:
+      assert(false,__FILE__,__LINE__);
   }
-  service_can_request();
+  service_can_request(true);
 }
 
-static void process_can_msg(struct can_message *msg) {
-  if ((CAN_REQUEST_MATCH(msg->id,CAN_BOARD_ID) &&
+static void process_can_request(struct can_message *msg) {
+  if (CAN_REQUEST_MATCH(msg->id,CAN_BOARD_ID) &&
         msg->type == CAN_TYPE_DATA &&
         msg->fmt == CAN_FMT_STDID &&
         msg->len > 0) {
     uint8_t cmd = msg->data[0];
-    if (cmd & CAN_CMD_REQ_RESP) {
-      // We should not be receiving any responses, just requests
-      can_send_error_1(msg->id, CAN_ERR_BAD_REQ_RESP, cmd);
-      return;
-    }
     switch (cmd & CAN_CMD_CODE) {
       case CAN_CMD_CODE_RD:
         setup_can_request(msg);
@@ -244,7 +250,7 @@ static void poll_can_control() {
     can_cache[1].cache = 0;
   }
   if (can_busy) {
-    service_can_request();
+    service_can_request(false);
   } else if (can_rx_completed) {
     struct can_message msg;
     uint8_t data[64];
@@ -252,7 +258,7 @@ static void poll_can_control() {
     msg.data = data;
     err = can_control_read(&msg);
     if (err) record_can_error(err);
-    else process_can_msg(msg);
+    else process_can_request(&msg);
   }
 }
 
