@@ -4,7 +4,6 @@
 
 bool can_tx_completed = true;
 bool can_rx_completed = false;
-bool can_busy = false;
 
 
 static void CAN_CTRL_tx_callback(struct can_async_descriptor *const descr) {
@@ -15,11 +14,6 @@ static void CAN_CTRL_tx_callback(struct can_async_descriptor *const descr) {
 static void CAN_CTRL_rx_callback(struct can_async_descriptor *const descr) {
   can_rx_completed = true;
   (void)descr;
-	// struct can_message msg;
-	// uint8_t            data[64];
-	// msg.data = data;
-	// can_async_read(descr, &msg);
-	// return;
 }
 
 int32_t can_control_read(struct can_message *msg) {
@@ -102,14 +96,14 @@ static void service_can_request(bool new_request) {
   } else {
     switch (cur_req.cmd) {
       case CAN_CMD_CODE_RD:
-        cur_req.odata[0] = cur_req.cmd | CAN_CMD_SEQ(cur_req.seq++);
-        cur_req.omsg.len = 1;
-        if (cur_req.half_word) {
-          cur_req.odata[cur_req.omsg.len++] = (cur_req.value >> 8) & 0xFF;
-          cur_req.half_word = false;
-        }
-        while (cur_req.count < cur_req.count_limit) {
+        do {
           uint32_t rv;
+          cur_req.odata[0] = cur_req.cmd | CAN_CMD_SEQ(cur_req.seq++);
+          cur_req.omsg.len = 1;
+          if (cur_req.half_word) {
+            cur_req.odata[cur_req.omsg.len++] = (cur_req.value >> 8) & 0xFF;
+            cur_req.half_word = false;
+          }
           while (cur_req.omsg.len < 8 && cur_req.count < cur_req.count_limit) {
             uint16_t addr = cur_req.idata[cur_req.count+1];
             if (subbus_read(addr, &cur_req.value)) {
@@ -135,7 +129,7 @@ static void service_can_request(bool new_request) {
             }
             return;
           }
-        }
+        } while (cur_req.half_word || cur_req.count < cur_req.count_limit);
         cur_req.pending = false;
         break;
       default:
@@ -192,7 +186,7 @@ void setup_can_request(struct can_message *msg) {
 
 static void process_can_request(struct can_message *msg) {
   if (CAN_REQUEST_MATCH(msg->id,CAN_BOARD_ID) &&
-        msg->type == CAN_TYPE_DATA &&
+        // msg->type == CAN_TYPE_DATA &&
         msg->fmt == CAN_FMT_STDID &&
         msg->len > 0) {
     uint8_t cmd = msg->data[0];
@@ -230,8 +224,8 @@ static void can_control_init(void) {
    * docs as far as I've followed them, in which case it will accept all
    * addresses.
    */
-	filter.id   = 0x1;
-	filter.mask = 0;
+	filter.id   = CAN_ID_BOARD(CAN_BOARD_ID);
+	filter.mask = CAN_ID_BOARD_MASK | CAN_ID_REPLY_BIT;
 	can_async_set_filter(&CAN_CTRL, 0, CAN_FMT_STDID, &filter);
 }
 
@@ -249,16 +243,20 @@ static void poll_can_control() {
     can_cache[1].was_read = false;
     can_cache[1].cache = 0;
   }
-  if (can_busy) {
+  if (cur_req.pending) {
     service_can_request(false);
-  } else if (can_rx_completed) {
+  } else {
     struct can_message msg;
     uint8_t data[64];
     int32_t err;
     msg.data = data;
     err = can_control_read(&msg);
-    if (err) record_can_error(err);
-    else process_can_request(&msg);
+    if (err) {
+      // can_async_read() returns ERR_NOT_FOUND if no message is waiting
+      if (err != ERR_NOT_FOUND) {
+        record_can_error(err);
+      }
+    } else process_can_request(&msg);
   }
 }
 

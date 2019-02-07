@@ -209,10 +209,16 @@ void i2c_enable(bool value) {
   i2c_enabled = value;
 }
 
+#define I2C_INTFLAG_ERROR (1<<7)
+
 static void I2C_async_error(struct i2c_m_async_desc *const i2c, int32_t error) {
   I2C_txfr_complete = true;
   I2C_error_seen = true;
   I2C_error = error;
+  if (error == I2C_ERR_BUS) {
+    hri_sercomi2cm_write_STATUS_reg(I2C.device.hw, SERCOM_I2CM_STATUS_BUSERR);
+    hri_sercomi2cm_clear_INTFLAG_reg(I2C.device.hw, I2C_INTFLAG_ERROR);
+  }
 }
 
 static void I2C_txfr_completed(struct i2c_m_async_desc *const i2c) {

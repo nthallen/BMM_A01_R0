@@ -25,7 +25,8 @@
 #define CAN_ID_BOARD_MASK 0x780
 #define CAN_ID_BOARD(x) (((x)<<7)&CAN_ID_BOARD_MASK)
 #define CAN_ID_REPLY_BIT 0x040
-#define CAN_ID_REQID 0x3F
+#define CAN_ID_REQID_MASK 0x3F
+#define CAN_ID_REQID(x) ((x)&CAN_ID_REQID_MASK)
 #define CAN_REPLY_ID(bd,req) \
     (CAN_ID_BOARD(bd)|(req&CAN_ID_REQID)|CAN_ID_REPLY_BIT)
 #define CAN_REQUEST_ID(bd,req) (CAN_ID_BOARD(bd)|(req&CAN_ID_REQID))

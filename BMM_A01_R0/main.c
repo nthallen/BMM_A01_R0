@@ -21,9 +21,9 @@ int main(void)
     while (true) ; // some driver is misconfigured.
   }
   subbus_reset();
-  uart_init();
+  // uart_init();
   while (1) {
-    poll_control();
+    // poll_control();
     subbus_poll();
     #if SUBBUS_INTERRUPTS
       if (subbus_intr_req)
