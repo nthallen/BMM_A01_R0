@@ -479,12 +479,6 @@
     <Compile Include="config\RTE_Components.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="control.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="control.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="Device_Startup\startup_samc21.c">
       <SubType>compile</SubType>
     </Compile>

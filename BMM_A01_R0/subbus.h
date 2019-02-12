@@ -35,6 +35,8 @@
 #define SUBBUS_BDID_ADDR            0x0002
 #define SUBBUS_FAIL_ADDR            0x0004
 #define SUBBUS_SWITCHES_ADDR        0x0005
+#define SUBBUS_DESC_FIFO_SIZE_ADDR  0x0006
+#define SUBBUS_DESC_FIFO_ADDR       0x0007
 #define SUBBUS_MAX_DRIVERS          6
 #define SUBBUS_INTERRUPTS           0
 
@@ -75,7 +77,7 @@ typedef struct {
   subbus_cache_word_t *cache;
   void (*reset)(void);
   void (*poll)(void);
-  void (*sb_action)(void);
+  void (*sb_action)(void); // called if dynamic
   bool initialized;
 } subbus_driver_t;
 

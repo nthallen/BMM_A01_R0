@@ -12,7 +12,6 @@ static struct io_descriptor *I2C_io;
 static volatile bool I2C_txfr_complete = true;
 static volatile bool I2C_error_seen = false;
 static volatile int32_t I2C_error = I2C_OK;
-static int32_t pm_i2c_error = I2C_OK;
 static volatile uint8_t pm_ov_status = 0;
 static uint8_t pm_ibuf[6];
 #define PM_SLAVE_ADDR 0x67
@@ -82,7 +81,7 @@ static bool pm_poll(void) {
     case pm_init_tx:
       if (I2C_error_seen) {
         I2C_error_seen = false;
-        pm_i2c_error = I2C_error;
+        pm_record_i2c_error(pm_state, I2C_error);
         pm_state = pm_init;
       } else {
         i2c_cache[1].cache = (pm_ibuf[0]<<8) | pm_ibuf[1];

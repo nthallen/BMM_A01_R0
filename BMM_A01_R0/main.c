@@ -13,6 +13,7 @@ int main(void)
   i2c_enable(I2C_ENABLE_DEFAULT);
   if (subbus_add_driver(&sb_base)
       || subbus_add_driver(&sb_fail_sw)
+      || subbus_add_driver(&sb_can_desc)
       || subbus_add_driver(&sb_i2c)
       || subbus_add_driver(&sb_cmd)
       || subbus_add_driver(&sb_can)
@@ -21,9 +22,7 @@ int main(void)
     while (true) ; // some driver is misconfigured.
   }
   subbus_reset();
-  // uart_init();
   while (1) {
-    // poll_control();
     subbus_poll();
     #if SUBBUS_INTERRUPTS
       if (subbus_intr_req)
