@@ -29,7 +29,7 @@
 #endif
 
 #if USE_SUBBUS
-#define SUBBUS_BUILD_NUM            1
+#define SUBBUS_BUILD_NUM            2
 #define SUBBUS_FAIL_RESERVED        0xF000
 #define SUBBUS_INTA_ADDR            0x0001
 #define SUBBUS_BDID_ADDR            0x0002
