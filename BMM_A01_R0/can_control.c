@@ -187,6 +187,8 @@ static void service_can_request(bool new_request) {
     }
     if (send_buf.cp >= send_buf.nc) {
       cur_req.pending = false;
+      recv_buf.err_flagged = false;
+      send_buf.in_progress = false;
       return;
     }
   }
@@ -224,6 +226,8 @@ static void service_can_request(bool new_request) {
   } while (send_buf.cp < send_buf.nc);
   cur_req.pending = false;
   cur_req.tx_blocked = false;
+  recv_buf.err_flagged = false;
+  send_buf.in_progress = false;
 }
 
 static void can_send_error_1(uint16_t id, uint8_t err_code, uint8_t arg) {
@@ -231,6 +235,7 @@ static void can_send_error_1(uint16_t id, uint8_t err_code, uint8_t arg) {
     return;
   }
   send_buf.in_progress = false;
+  recv_buf.in_progress = false;
   io_msg_init(&send_buf, id, CAN_CMD_CODE_ERROR, 2);
   send_buf.buf[send_buf.nc++] = err_code;
   send_buf.buf[send_buf.nc++] = arg;
@@ -242,6 +247,7 @@ static void can_send_error_2(uint16_t id, uint8_t err_code, uint8_t arg1, uint8_
     return;
   }
   send_buf.in_progress = false;
+  recv_buf.in_progress = false;
   io_msg_init(&send_buf, id, CAN_CMD_CODE_ERROR, 3);
   send_buf.buf[send_buf.nc++] = err_code;
   send_buf.buf[send_buf.nc++] = arg1;
