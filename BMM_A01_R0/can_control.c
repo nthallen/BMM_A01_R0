@@ -13,7 +13,7 @@ typedef struct {
   //* The number of bytes that have been processed
   int cp;
   //* The CAN ID of the message
-  uint8_t id;
+  uint16_t id;
   //* The cmd code of the message
   uint8_t cmd;
   //* The current sequence number
@@ -57,7 +57,7 @@ static bool io_append(can_io_buf *io, uint8_t *src, int len) {
  * @param len The number of bytes to be added
  * @return true if the setup parameters are illegal
  */
-static bool io_msg_init(can_io_buf *io, uint8_t id, uint8_t cmd, int len) {
+static bool io_msg_init(can_io_buf *io, uint16_t id, uint8_t cmd, int len) {
   if (io->in_progress || len > CAN_MAX_TXFR) {
     return true;
   }

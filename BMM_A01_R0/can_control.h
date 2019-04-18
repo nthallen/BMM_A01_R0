@@ -6,14 +6,30 @@
 #include <err_codes.h>
 #include "subbus.h"
 
+// These parameters are common to all boards built with this code
 #define CAN_BOARD_INSTRUMENT "SCoPEx"
 #define CAN_BOARD_BOARD_TYPE "BMM"
 #define CAN_BOARD_BOARD_REV "Rev A"
 #define CAN_BOARD_FIRMWARE_REV "V1.0"
 #define CAN_BOARD_TYPE 10
-#define CAN_BOARD_SN 1
+
+#if ! defined(CAN_BOARD_SN)
+#error Must define CAN_BOARD_SN in Build Properties
+#endif
+
+#if CAN_BOARD_SN == 1
+#define CAN_BOARD_ID 3
+#define CAN_BOARD_LOCATION "28V Bus"
+#endif
+
+#if CAN_BOARD_SN == 3
 #define CAN_BOARD_ID 1
 #define CAN_BOARD_LOCATION "50V BUS"
+#endif
+
+#if ! defined(CAN_BOARD_ID) || ! defined(CAN_BOARD_LOCATION)
+#error Specified CAN_BOARD_SN apparently not configured in can_control.h
+#endif
 
 #define CAN_BOARD_REV_STR(SN,ID) CAN_BOARD_INSTRUMENT " " CAN_BOARD_BOARD_TYPE " " \
      CAN_BOARD_BOARD_REV " " CAN_BOARD_FIRMWARE_REV \
