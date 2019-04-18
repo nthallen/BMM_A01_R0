@@ -22,10 +22,21 @@
 #define CAN_BOARD_LOCATION "28V Bus"
 #endif
 
+#if CAN_BOARD_SN == 2
+#define CAN_BOARD_ID 4
+#define CAN_BOARD_LOCATION "28V Bus"
+#endif
+
 #if CAN_BOARD_SN == 3
 #define CAN_BOARD_ID 1
-#define CAN_BOARD_LOCATION "50V BUS"
+#define CAN_BOARD_LOCATION "Lower 50V BUS"
 #endif
+
+#if CAN_BOARD_SN == 4
+#define CAN_BOARD_ID 2
+#define CAN_BOARD_LOCATION "Upper 50V BUS"
+#endif
+
 
 #if ! defined(CAN_BOARD_ID) || ! defined(CAN_BOARD_LOCATION)
 #error Specified CAN_BOARD_SN apparently not configured in can_control.h
