@@ -11,3 +11,7 @@ adding CAN_BOARD_SN=1 for serial number 1.
 
 I have also created custom Atmel Studio configurations for each serial number, so simply
 switching configurations gets me to a specific board.
+
+(Note: CAN_BOARD_SN here actually refers to the BMM serial number. A different board
+type might reuse the can_control code and have a different series of serial numbers.
+The CAN_ prefix is used here just as a namespace qualifier.)
