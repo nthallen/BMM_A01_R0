@@ -29,6 +29,8 @@ static void cmd_poll(void) {
   update_status(&status, STATUS_LED, 0x01);
   update_status(&status, FAULT_LED, 0x02);
   update_status(&status, SHDN_N, 0x04);
+  update_status(&status, VDD2SENSE, 0x08);
+  update_status(&status, ALRT, 0x10);
   subbus_cache_update(&sb_cmd, CMD_BASE_ADDR, status);
 }
 

@@ -5,48 +5,7 @@
 #include <hal_can_async.h>
 #include <err_codes.h>
 #include "subbus.h"
-
-// These parameters are common to all boards built with this code
-#define CAN_BOARD_INSTRUMENT "SCoPEx"
-#define CAN_BOARD_BOARD_TYPE "BMM"
-#define CAN_BOARD_BOARD_REV "Rev A"
-#define CAN_BOARD_FIRMWARE_REV "V1.0"
-#define CAN_BOARD_TYPE 10
-
-#if ! defined(CAN_BOARD_SN)
-#error Must define CAN_BOARD_SN in Build Properties
-#endif
-
-#if CAN_BOARD_SN == 1
-#define CAN_BOARD_ID 3
-#define CAN_BOARD_LOCATION "28V Bus"
-#endif
-
-#if CAN_BOARD_SN == 2
-#define CAN_BOARD_ID 4
-#define CAN_BOARD_LOCATION "28V Bus"
-#endif
-
-#if CAN_BOARD_SN == 3
-#define CAN_BOARD_ID 1
-#define CAN_BOARD_LOCATION "Lower 50V BUS"
-#endif
-
-#if CAN_BOARD_SN == 4
-#define CAN_BOARD_ID 2
-#define CAN_BOARD_LOCATION "Upper 50V BUS"
-#endif
-
-
-#if ! defined(CAN_BOARD_ID) || ! defined(CAN_BOARD_LOCATION)
-#error Specified CAN_BOARD_SN apparently not configured in can_control.h
-#endif
-
-#define CAN_BOARD_REV_STR(SN,ID) CAN_BOARD_INSTRUMENT " " CAN_BOARD_BOARD_TYPE " " \
-     CAN_BOARD_BOARD_REV " " CAN_BOARD_FIRMWARE_REV \
-     " S/N:" #SN " CAN ID:" #ID " " CAN_BOARD_LOCATION
-#define CAN_BOARD_REV_XSTR(CAN_BOARD_SN,CAN_BOARD_ID) CAN_BOARD_REV_STR(CAN_BOARD_SN,CAN_BOARD_ID)
-#define CAN_BOARD_REV CAN_BOARD_REV_XSTR(CAN_BOARD_SN,CAN_BOARD_ID)
+#include "serial_num.h"
 
 #define CAN_BASE_ADDR 0x34
 #define CAN_HIGH_ADDR 0x36

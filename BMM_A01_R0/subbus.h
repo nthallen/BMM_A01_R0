@@ -3,40 +3,21 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "serial_num.h"
 
-#define BMM_14
 #define USE_SUBBUS 1
 
-#ifdef FCC1
-  #define BOARD_REV                   "V7:178:HCHO FCC Rev A V1.1"
-  #define SUBBUS_BOARD_ID             10
-#endif
-#ifdef FCC2
-  #define BOARD_REV                   "V7:178:HCHO FCC Rev A V1.1"
-  #define SUBBUS_BOARD_ID             11
-#endif
-#ifdef FCC3
-  #define BOARD_REV                   "V7:178:Plant Chamber FCC Rev A V1.2"
-  #define SUBBUS_BOARD_ID             13
-#endif
-#ifdef uDACS_12
-  #define BOARD_REV                   "V9:178:HCHO uDACS Rev A V1.1"
-  #define SUBBUS_BOARD_ID             12
-#endif
-#ifdef BMM_14
-  #define BOARD_REV                   "V10:0:SCoPEx BMM Rev A V1.0"
-  #define SUBBUS_BOARD_ID             14
-#endif
-
 #if USE_SUBBUS
-#define SUBBUS_BUILD_NUM            2
 #define SUBBUS_FAIL_RESERVED        0xF000
 #define SUBBUS_INTA_ADDR            0x0001
 #define SUBBUS_BDID_ADDR            0x0002
-#define SUBBUS_FAIL_ADDR            0x0004
-#define SUBBUS_SWITCHES_ADDR        0x0005
-#define SUBBUS_DESC_FIFO_SIZE_ADDR  0x0006
-#define SUBBUS_DESC_FIFO_ADDR       0x0007
+#define SUBBUS_BLDNO_ADDR           0x0003
+#define SUBBUS_BDSN_ADDR            0x0004
+#define SUBBUS_INSTID_ADDR          0x0005
+#define SUBBUS_FAIL_ADDR            0x0006
+#define SUBBUS_SWITCHES_ADDR        0x0007
+#define SUBBUS_DESC_FIFO_SIZE_ADDR  0x0008
+#define SUBBUS_DESC_FIFO_ADDR       0x0009
 #define SUBBUS_MAX_DRIVERS          6
 #define SUBBUS_INTERRUPTS           0
 

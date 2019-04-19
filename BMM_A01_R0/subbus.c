@@ -94,14 +94,16 @@ int intr_detach( uint16_t addr );
 void intr_service(void);
 #endif
 
-static subbus_cache_word_t sb_base_cache[SUBBUS_BDID_ADDR+2] = {
+static subbus_cache_word_t sb_base_cache[SUBBUS_INSTID_ADDR+1] = {
   { 0, 0, 0, 0, 0, 0, 0 }, // Reserved zero address
   { 0, 0, 0, 0, 0, 0, 0} , // INTA
-  { SUBBUS_BUILD_NUM, 0, 1, 0, 0, 0, 0 }, // Build number (SUBBUS_BDID_ADDR)
-  { SUBBUS_BOARD_ID, 0, 1, 0, 0, 0, 0 }      // Board ID
+  { SUBBUS_BOARD_ID, 0, 1, 0, 0, 0, 0 },  // Board ID (SUBBUS_BDID_ADDR)
+  { SUBBUS_BOARD_BUILD_NUM, 0, 1, 0, 0, 0, 0 }, // Build number (SUBBUS_BLDNO_ADDR)
+  { SUBBUS_BOARD_SN, 0, 1, 0, 0, 0, 0 }, // Build number (SUBBUS_BDSN_ADDR)
+  { SUBBUS_BOARD_INSTRUMENT_ID, 0, 1, 0, 0, 0, 0 } // Build number (SUBBUS_BDSN_ADDR)
 };
 
-subbus_driver_t sb_base = { 0, SUBBUS_BDID_ADDR+1, sb_base_cache, 0, 0, 0, false };
+subbus_driver_t sb_base = { 0, SUBBUS_BDSN_ADDR, sb_base_cache, 0, 0, 0, false };
 
 static subbus_cache_word_t sb_fail_sw_cache[SUBBUS_SWITCHES_ADDR-SUBBUS_FAIL_ADDR+1] = {
   { 0, 0, 1, 0, 1, 0, 0 }, // Fail Register

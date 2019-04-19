@@ -484,7 +484,7 @@ static struct can_desc_t {
 } can_desc;
 
 static void can_desc_init(void) {
-  can_desc.desc = CAN_BOARD_REV;
+  can_desc.desc = SUBBUS_BOARD_REV;
   can_desc.cp = 0;
   can_desc.nc = strlen(can_desc.desc)+1; // Include the trailing NUL
   subbus_cache_update(&sb_can_desc, SUBBUS_DESC_FIFO_SIZE_ADDR, (can_desc.nc+1)/2);
