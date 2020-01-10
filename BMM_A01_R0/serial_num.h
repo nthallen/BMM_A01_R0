@@ -14,38 +14,65 @@
 #define SERIAL_NUM_H_INCLUDED
 
 // These parameters are common to all boards built with this code
-#define SUBBUS_BOARD_INSTRUMENT "SCoPEx"
-#define SUBBUS_BOARD_INSTRUMENT_ID 1
 #define SUBBUS_BOARD_BOARD_TYPE "BMM"
 #define SUBBUS_BOARD_BOARD_REV "Rev A"
 #define SUBBUS_BOARD_FIRMWARE_REV "V1.0"
 #define SUBBUS_BOARD_ID 10
-#define SUBBUS_BOARD_BUILD_NUM 1
+#define SUBBUS_BOARD_BUILD_NUM 2
 
 #if ! defined(SUBBUS_BOARD_SN)
 #error Must define SUBBUS_BOARD_SN in Build Properties
 #endif
 
 #if SUBBUS_BOARD_SN == 1
-#define CAN_BOARD_ID 3
-#define SUBBUS_BOARD_LOCATION "28V Bus"
+#define CAN_BOARD_ID 1
+#define SUBBUS_BOARD_LOCATION "TRU Control"
+#define SUBBUS_BOARD_INSTRUMENT "Halogens"
+#define SUBBUS_BOARD_INSTRUMENT_ID 5
 #endif
 
 #if SUBBUS_BOARD_SN == 2
-#define CAN_BOARD_ID 4
+#define CAN_BOARD_ID 1
 #define SUBBUS_BOARD_LOCATION "28V Bus"
 #endif
 
 #if SUBBUS_BOARD_SN == 3
-#define CAN_BOARD_ID 1
+#define CAN_BOARD_ID 2
 #define SUBBUS_BOARD_LOCATION "Lower 50V BUS"
 #endif
 
 #if SUBBUS_BOARD_SN == 4
-#define CAN_BOARD_ID 2
+#define CAN_BOARD_ID 3
 #define SUBBUS_BOARD_LOCATION "Upper 50V BUS"
 #endif
 
+#if SUBBUS_BOARD_SN == 5
+#define CAN_BOARD_ID 3
+#define SUBBUS_BOARD_LOCATION "Upper 50V BUS"
+#endif
+
+#if SUBBUS_BOARD_SN == 6
+#define CAN_BOARD_ID 1
+#define SUBBUS_BOARD_LOCATION "28V Bus"
+#endif
+
+#if SUBBUS_BOARD_SN == 7
+#define CAN_BOARD_ID 3
+#define SUBBUS_BOARD_LOCATION "Upper 50V BUS"
+#endif
+
+#if SUBBUS_BOARD_SN == 8
+#define CAN_BOARD_ID 3
+#define SUBBUS_BOARD_LOCATION "Upper 50V BUS"
+#endif
+
+#ifndef SUBBUS_BOARD_INSTRUMENT
+#define SUBBUS_BOARD_INSTRUMENT "SCoPEx"
+#endif
+
+#ifndef SUBBUS_BOARD_INSTRUMENT_ID
+#define SUBBUS_BOARD_INSTRUMENT_ID 1
+#endif
 
 #if ! defined(CAN_BOARD_ID) || ! defined(SUBBUS_BOARD_LOCATION)
 #error Specified CAN_BOARD_ID apparently not configured in can_control.h
