@@ -8,11 +8,11 @@ serial_port_clear();
 set(s,'BaudRate',9600);
 %%
 % First check that the board is an FCC
-BdID = read_subbus(s, 3);
-if BdID ~= 14
-  error('Expected BdID 14. Reported %d', BdID);
+BdID = read_subbus(s, 2); % Addr 2 is Board ID
+if BdID ~= 10
+  error('Expected BdID 10. Reported %d', BdID);
 end
-Build = read_subbus(s,2);
+Build = read_subbus(s,3); % Addr 3 is Build number
 fprintf(1, 'Attached to BMM %d Build # %d\n', BdID, Build);
 %%
 PI = read_subbus(s, 33);
